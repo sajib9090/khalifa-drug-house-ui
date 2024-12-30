@@ -37,4 +37,5 @@ export const { addPurchaseLog, removeSingleItem } = purchaseLogSlice.actions;
 
 export default purchaseLogSlice.reducer;
 
-export const selectedItems = (state) => state.purchaseLog.selectedPurchaseItems;
+export const selectedPurchaseItems = (state) =>
+  state.purchaseLog.selectedPurchaseItems;

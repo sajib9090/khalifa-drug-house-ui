@@ -8,8 +8,6 @@ import { toast } from "sonner";
 const SellTable = ({ cart }) => {
   const dispatch = useDispatch();
 
-
-
   const handleRemove = (id) => {
     dispatch(removeSingleItem({ id: id }));
     toast.success("Item removed successfully");

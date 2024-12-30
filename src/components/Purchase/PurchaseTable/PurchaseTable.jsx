@@ -1,48 +1,24 @@
-import { useDispatch, useSelector } from "react-redux";
-import {
-  removeSingleItem,
-  selectedItems,
-} from "../../../redux/features/purchase/purchaseSlice";
+/* eslint-disable react/prop-types */
+import { useDispatch } from "react-redux";
+import { removeSingleItem } from "../../../redux/features/purchase/purchaseSlice";
 import { useState } from "react";
 import CurrencyFormatter from "../../CurrencyFormatter/CurrencyFormatter";
 import Modal from "../../Modal/Modal";
 import { toast } from "sonner";
 
-const PurchaseTable = () => {
-  const items = useSelector(selectedItems);
+const PurchaseTable = ({
+  purchaseItems,
+  selectedId,
+  setSelectedId,
+  discountPercent,
+  handleDiscountPercentChange,
+  discountAmount,
+  total,
+  subtotal,
+  handleDiscountAmountChange,
+  totalDiscount,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
-
-  // State for discount and subtotal calculations
-  const [discountPercent, setDiscountPercent] = useState(0);
-  const [discountAmount, setDiscountAmount] = useState(0);
-
-  // Calculate total price
-  const total = items.reduce(
-    (sum, item) => sum + item?.purchase_price * item?.p_quantity,
-    0
-  );
-
-  // Calculate discount amount based on percentage
-  const calculatedDiscountAmount = (total * discountPercent) / 100;
-
-  // Total discount amount (percentage-based + fixed discount)
-  const totalDiscount = calculatedDiscountAmount + discountAmount;
-
-  // Subtotal after applying discount
-  const subtotal = total - totalDiscount;
-
-  // Validation: Prevent negative discount percentage
-  const handleDiscountPercentChange = (e) => {
-    const value = Number(e.target.value);
-    setDiscountPercent(value >= 0 ? value : 0);
-  };
-
-  // Validation: Prevent negative discount amount
-  const handleDiscountAmountChange = (e) => {
-    const value = Number(e.target.value);
-    setDiscountAmount(value >= 0 ? value : 0);
-  };
 
   const handleDelete = (id) => {
     setSelectedId(id);
@@ -76,8 +52,8 @@ const PurchaseTable = () => {
               </tr>
             </thead>
             <tbody>
-              {items.length > 0 ? (
-                items.map((item, index) => (
+              {purchaseItems?.length > 0 ? (
+                purchaseItems?.map((item, index) => (
                   <tr key={item?._id} className="hover:bg-gray-50">
                     <td className="px-4 py-2 border text-center">
                       {index + 1}

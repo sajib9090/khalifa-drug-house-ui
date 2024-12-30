@@ -2,8 +2,11 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useGetAllMedicinesQuery } from "../../../redux/features/medicineApi/medicineApi";
 import CurrencyFormatter from "../../../components/CurrencyFormatter/CurrencyFormatter";
-import { useDispatch } from "react-redux";
-import { addPurchaseLog } from "../../../redux/features/purchase/purchaseSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addPurchaseLog,
+  selectedPurchaseItems,
+} from "../../../redux/features/purchase/purchaseSlice";
 import PurchaseTable from "../../../components/Purchase/PurchaseTable/PurchaseTable";
 
 const NewPurchase = () => {
@@ -12,6 +15,8 @@ const NewPurchase = () => {
   const [activeIndex, setActiveIndex] = useState(-1);
   const [selectedItem, setSelectedItem] = useState(null);
   const [quantity, setQuantity] = useState("");
+  const [selectedId, setSelectedId] = useState(null);
+  const purchaseItems = useSelector(selectedPurchaseItems);
 
   const { data: medicines, isLoading } = useGetAllMedicinesQuery(
     {
@@ -26,6 +31,37 @@ const NewPurchase = () => {
     },
     { skip: !searchValue }
   );
+
+  // State for discount and subtotal calculations
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [discountAmount, setDiscountAmount] = useState(0);
+
+  // Calculate total price
+  const total = purchaseItems?.reduce(
+    (sum, item) => sum + item?.purchase_price * item?.p_quantity,
+    0
+  );
+
+  // Calculate discount amount based on percentage
+  const calculatedDiscountAmount = (total * discountPercent) / 100;
+
+  // Total discount amount (percentage-based + fixed discount)
+  const totalDiscount = calculatedDiscountAmount + discountAmount;
+
+  // Subtotal after applying discount
+  const subtotal = total - totalDiscount;
+
+  // Validation: Prevent negative discount percentage
+  const handleDiscountPercentChange = (e) => {
+    const value = Number(e.target.value);
+    setDiscountPercent(value >= 0 ? value : 0);
+  };
+
+  // Validation: Prevent negative discount amount
+  const handleDiscountAmountChange = (e) => {
+    const value = Number(e.target.value);
+    setDiscountAmount(value >= 0 ? value : 0);
+  };
 
   useEffect(() => {
     if (searchInputRef.current) {
@@ -109,6 +145,7 @@ const NewPurchase = () => {
       </div>
 
       <div className="w-full min-h-[70vh] border border-gray-200 rounded mt-4 bg-slate-50 p-2">
+        {/* Search Bar */}
         <div className="search1 mt-4">
           <input
             value={searchValue}
@@ -116,10 +153,12 @@ const NewPurchase = () => {
             ref={searchInputRef}
             className="rounded"
             type="search"
-            placeholder="Search Anything..."
+            placeholder="Search medicines..."
+            aria-label="Search medicines"
           />
         </div>
 
+        {/* Medicine Table */}
         {!isLoading && medicines?.data && searchValue && (
           <div className="mt-4 bg-white border border-gray-300 rounded p-2 shadow-lg overflow-x-auto">
             {medicines?.data?.length > 0 ? (
@@ -130,8 +169,10 @@ const NewPurchase = () => {
                       Medicine Title
                     </th>
                     <th className="px-4 py-2 border text-end">Stock</th>
-                    <th className="px-4 py-2 border text-end">Purchase P</th>
-                    <th className="px-4 py-2 border text-end">Sell P</th>
+                    <th className="px-4 py-2 border text-end">
+                      Purchase Price
+                    </th>
+                    <th className="px-4 py-2 border text-end">Sell Price</th>
                     <th className="px-4 py-2 border text-start">Company</th>
                     <th className="px-4 py-2 border text-start">Action</th>
                   </tr>
@@ -173,12 +214,13 @@ const NewPurchase = () => {
                             onKeyPress={handleQuantityKeyPress}
                             className="border border-gray-300 rounded w-16"
                             placeholder="Enter quantity"
-                            autoFocus
+                            aria-label="Quantity input"
                           />
                         ) : (
                           <button
                             onClick={() => handleClick(medicine)}
                             className="text-blue-500 hover:underline w-16"
+                            aria-label="Select medicine"
                           >
                             Select
                           </button>
@@ -193,7 +235,41 @@ const NewPurchase = () => {
             )}
           </div>
         )}
-        <PurchaseTable />
+
+        {/* Purchase Summary */}
+        <PurchaseTable
+          purchaseItems={purchaseItems}
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
+          discountPercent={discountPercent}
+          handleDiscountPercentChange={handleDiscountPercentChange}
+          discountAmount={discountAmount}
+          total={total}
+          subtotal={subtotal}
+          handleDiscountAmountChange={handleDiscountAmountChange}
+          totalDiscount={totalDiscount}
+        />
+
+        {/* Submit Purchase */}
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={() => {
+              const purchaseDetails = {
+                purchaseItems,
+                total,
+                totalDiscount,
+                subtotal,
+              };
+
+              dispatch(addPurchaseLogHistory(purchaseDetails));
+              alert("Purchase successfully logged!");
+            }}
+            className="px-6 py-3 bg-blue-500 text-white rounded font-semibold hover:bg-blue-600"
+            aria-label="Submit purchase"
+          >
+            Submit Purchase
+          </button>
+        </div>
       </div>
     </div>
   );
