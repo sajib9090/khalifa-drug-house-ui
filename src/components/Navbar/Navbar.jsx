@@ -45,7 +45,9 @@ const Navbar = () => {
               <img src={defaultLogo} alt="logo" width={50} height={50} />
             </div>
             <div className="hidden sm:block">
-              <p className="text-lg font-semibold">Pharma Name</p>
+              <p className="text-lg font-semibold">
+                {user?.brand?.pharmacy_name}
+              </p>
             </div>
           </div>
           <div>
@@ -63,14 +65,16 @@ const Navbar = () => {
         <div className="flex justify-between items-center p-4">
           <div className="flex items-center space-x-2">
             <img src={defaultLogo} alt="logo" width={50} height={50} />
-            <p className="text-white text-xl font-bold">Pharma Name</p>
+            <p className="text-white text-xl font-bold">
+              {user?.brand?.pharmacy_name}
+            </p>
           </div>
           <button onClick={handleMenuToggle}>
             <img src={closeIcon} alt="close" width={30} height={30} />
           </button>
         </div>
         <div className="flex-grow flex flex-col justify-center items-center space-y-4 text-white">
-          <MobileLink />
+          <MobileLink setIsMenuOpen={setIsMenuOpen} />
         </div>
       </div>
     </>

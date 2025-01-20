@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AddNewMedicine from "../../../components/MedicineDetails/AddNewMedicine/AddNewMedicine";
 import { useGetAllMedicinesQuery } from "../../../redux/features/medicineApi/medicineApi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PrimaryLoading from "../../../components/Loading/PrimaryLoading";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import CurrencyFormatter from "../../../components/CurrencyFormatter/CurrencyFormatter";
@@ -17,6 +17,7 @@ const MedicineDetails = () => {
   const [groupValue, setGroupValue] = useState("");
   const [companyValue, setCompanyValue] = useState("");
   const [categoryValue, setCategoryValue] = useState("");
+  const navigate = useNavigate();
 
   const { data: medicines, isLoading } = useGetAllMedicinesQuery({
     searchValue: searchValue,
@@ -238,12 +239,16 @@ const MedicineDetails = () => {
                 {medicines?.data?.map((d, i) => (
                   <tr
                     key={i}
-                    className="border-b border-[#ebebeb] min-h-[40px] w-full sm:text-[16px]"
+                    className="border-b border-[#ebebeb] min-h-[40px] w-full sm:text-[16px] hover:underline cursor-pointer"
                   >
                     <td className="pl-4 py-2 text-[12px]">
                       {i + 1 + (page - 1) * resultPerPage}
                     </td>
-                    <td className="capitalize text-[12px]">
+                    <td
+                      onClick={() => navigate(d?._id)}
+                      className="capitalize text-[12px]"
+                      title={d?.medicine_title}
+                    >
                       {d?.medicine_title?.length > 40
                         ? d?.medicine_title.slice(0, 40) + "..."
                         : d?.medicine_title}
@@ -348,6 +353,21 @@ const MedicineDetails = () => {
             </div>
           </div>
         </>
+      </div>
+      <div className="flex flex-col items-end justify-center py-2">
+        <div className="bg-gray-100 p-3 rounded-md shadow w-full max-w-xs sm:max-w-sm">
+          <h1 className="text-lg font-medium text-center text-gray-700 mb-3">
+            Stock Value Summary
+          </h1>
+          <div className="flex justify-between items-center py-1 border-b border-gray-200">
+            <p className="text-sm text-gray-600">Total Purchase Value:</p>
+            <CurrencyFormatter value={medicines?.total_purchase_value} />
+          </div>
+          <div className="flex justify-between items-center py-1">
+            <p className="text-sm text-gray-600">Total Sell Value:</p>
+            <CurrencyFormatter value={medicines?.total_sales_value} />
+          </div>
+        </div>
       </div>
     </div>
   );

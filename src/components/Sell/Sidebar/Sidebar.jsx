@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 const Sidebar = ({ cart }) => {
   const [discountValue, setDiscountValue] = useState("");
   const [discountType, setDiscountType] = useState("percent");
+  const [status, setStatus] = useState("paid");
+  const [customerMobile, setCustomerMobile] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const printButtonRef = useRef(null);
 
@@ -44,19 +46,24 @@ const Sidebar = ({ cart }) => {
       total_discount: calculatedDiscount,
       sub_total_bill: totalAfterDiscount + calculatedDiscount,
       final_bill: totalAfterDiscount,
+      status,
+      customer_mobile: status === "due" ? customerMobile : null,
     };
 
     try {
       const res = await createSell(data).unwrap();
-      console.log(res?.data);
+
       if (res?.success) {
         setIsOpen(false);
         dispatch(removeAllItems());
         toast.success("Successfully sold");
-        navigate(`${res?.data}`);
+        const ans = confirm("Want to see invoice?");
+        if (ans) {
+          navigate(res?.data);
+        }
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error?.message || error?.data?.message);
     }
   };
 
@@ -83,20 +90,26 @@ const Sidebar = ({ cart }) => {
         );
       });
 
-      return adjustedDiscounts.reduce((acc, discount) => acc + discount, 0);
+      return (
+        adjustedDiscounts?.reduce((acc, discount) => acc + discount, 0) || 0
+      );
     } else if (discountType === "amount") {
       const userDiscountAmount = parseFloat(discountValue || 0);
 
-      const maxDiscountAmounts = cart?.map((item) => {
-        const maxDiscount =
+      // Distribute discount proportionally to each item's contribution to subtotal
+      const adjustedDiscounts = cart?.map((item) => {
+        const itemSubtotal = (item?.s_quantity || 0) * (item?.sell_price || 0);
+        const itemProportionalDiscount =
+          (itemSubtotal / subtotal) * userDiscountAmount;
+
+        const maxItemDiscount =
           (item?.s_quantity || 0) * (item?.sell_price - item?.purchase_price);
-        return Math.min(
-          (userDiscountAmount / subtotal) * item?.sell_price,
-          maxDiscount
-        );
+        return Math.min(itemProportionalDiscount, maxItemDiscount);
       });
 
-      return maxDiscountAmounts?.reduce((acc, discount) => acc + discount, 0);
+      return (
+        adjustedDiscounts?.reduce((acc, discount) => acc + discount, 0) || 0
+      );
     }
     return 0;
   }, [cart, discountValue, discountType]);
@@ -158,6 +171,67 @@ const Sidebar = ({ cart }) => {
               </select>
             </div>
           </li>
+          <li className="flex flex-col mb-2">
+            <label className="text-sm font-medium text-gray-700 mb-1">
+              Status:
+            </label>
+            <div className="flex space-x-6">
+              <label className="flex items-center space-x-3 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="status"
+                  value="paid"
+                  checked={status === "paid"}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="hidden"
+                />
+                <div
+                  className={`w-5 h-5 rounded-full border-2 group-hover:border-yellow-500 ${
+                    status === "paid"
+                      ? "bg-yellow-500 border-yellow-500"
+                      : "border-gray-400"
+                  } transition-all duration-200`}
+                ></div>
+                <span className="text-gray-700 group-hover:text-yellow-500 transition-all duration-200">
+                  Paid
+                </span>
+              </label>
+              <label className="flex items-center space-x-3 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="status"
+                  value="due"
+                  checked={status === "due"}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="hidden"
+                />
+                <div
+                  className={`w-5 h-5 rounded-full border-2 group-hover:border-red-500 ${
+                    status === "due"
+                      ? "bg-red-500 border-red-500"
+                      : "border-gray-400"
+                  } transition-all duration-200`}
+                ></div>
+                <span className="text-gray-700 group-hover:text-red-500 transition-all duration-200">
+                  Due
+                </span>
+              </label>
+            </div>
+          </li>
+          {status === "due" && (
+            <li className="flex flex-col mb-2">
+              <label className="text-sm font-medium text-gray-700 mb-1">
+                Customer Mobile:
+              </label>
+              <input
+                type="text"
+                value={customerMobile}
+                onChange={(e) => setCustomerMobile(e.target.value)}
+                placeholder="Enter mobile number"
+                className="border border-gray-300 rounded px-2 py-1"
+              />
+            </li>
+          )}
           <li className="flex justify-between mb-2">
             <span>Discount:</span>
             <span>

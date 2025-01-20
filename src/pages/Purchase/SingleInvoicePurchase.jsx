@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetSingleInvoiceByIdQuery } from "../../redux/features/sellApi/SellApi";
 import { useEffect } from "react";
 import { IoIosPrint } from "react-icons/io";
 import { FaHome } from "react-icons/fa";
@@ -7,9 +6,10 @@ import CurrencyFormatter from "../../components/CurrencyFormatter/CurrencyFormat
 import { useSelector } from "react-redux";
 import { currentUser } from "../../redux/features/auth/authSlice";
 import defaultLogo from "../../assets/logo/png-transparent-blue-capsule-com-removebg-preview.png";
+import { useGetSingleInvoiceByIdQuery } from "../../redux/features/purchase/purchaseApi";
 import FullPageLoader from "../../components/Loading/FullPageLoader";
 
-const SingleInvoice = () => {
+const SingleInvoicePurchase = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const user = useSelector(currentUser);
@@ -27,6 +27,7 @@ const SingleInvoice = () => {
     document.body.innerHTML = originalContent;
     window.location.reload();
   };
+  const totalBill = data?.data?.final_bill || 0;
 
   useEffect(() => {
     const handleKeyPress = (event) => {
@@ -35,7 +36,7 @@ const SingleInvoice = () => {
         handlePrint();
       }
       if (event.key === "F4") {
-        navigate(-1);
+        navigate("/sell");
       }
     };
 
@@ -59,19 +60,19 @@ const SingleInvoice = () => {
         {/* Header */}
         <div className="text-center mb-2">
           <img
-            src={user?.pharmacyInfo?.brand_logo?.url || defaultLogo}
+            src={user?.brand?.brand_logo?.url || defaultLogo}
             alt="Brand Logo"
             className="w-12 h-12 mx-auto mb-2"
           />
           <h1 className="text-lg font-bold capitalize">
-            {user?.pharmacyInfo?.pharmacy_name || "Brand Name"}
+            {user?.brand?.brand_name || "Brand Name"}
           </h1>
           <p className="text-xs leading-tight">
-            {user?.pharmacyInfo?.address?.location || "Location"},{" "}
-            {user?.pharmacyInfo?.address?.sub_district || "Sub District"},{" "}
-            {user?.pharmacyInfo?.address?.district || "District"} <br />
-            +88{user?.pharmacyInfo?.contact?.mobile1 || "01000000000"}, +88
-            {user?.pharmacyInfo?.contact?.mobile2 || "01000000000"}
+            {user?.brand?.address?.location || "Location"},{" "}
+            {user?.brand?.address?.sub_district || "Sub District"},{" "}
+            {user?.brand?.address?.district || "District"} <br />
+            +88{user?.brand?.contact?.mobile1 || "01000000000"}, +88
+            {user?.brand?.contact?.mobile2 || "01000000000"}
           </p>
         </div>
 
@@ -79,10 +80,7 @@ const SingleInvoice = () => {
 
         {/* Invoice Info */}
         <div className="text-xs mb-3 mt-4">
-          <p className="capitalize">
-            <strong>Served by:</strong> {user?.name}
-          </p>
-          <p>{data?.data?.createdAt?.toLocaleString()}</p>
+          <p>{new Date().toLocaleString()}</p>
         </div>
 
         <hr className="my-2 border-gray-400" />
@@ -100,10 +98,10 @@ const SingleInvoice = () => {
             {data?.data?.items?.map((item, index) => (
               <tr key={index}>
                 <td className="py-1">{item?.medicine_title}</td>
-                <td className="text-center py-1">{item?.s_quantity}</td>
+                <td className="text-center py-1">{item?.p_quantity}</td>
                 <td className="text-right py-1">
                   <CurrencyFormatter
-                    value={item?.sell_price * item?.s_quantity}
+                    value={item?.purchase_price * item?.p_quantity}
                   />
                 </td>
               </tr>
@@ -117,7 +115,7 @@ const SingleInvoice = () => {
         <div className="text-sm flex items-center justify-end gap-4 font-semibold">
           <span>Total Bill:</span>
           <span>
-            <CurrencyFormatter value={data?.data?.sub_total_bill} />
+            <CurrencyFormatter value={totalBill} />
           </span>
         </div>
         {data?.data?.total_discount > 0 && (
@@ -131,7 +129,9 @@ const SingleInvoice = () => {
             <div className="text-sm flex items-center justify-end gap-4 font-semibold">
               <span>Net Bill:</span>
               <span>
-                <CurrencyFormatter value={data?.data?.final_bill} />
+                <CurrencyFormatter
+                  value={data?.data?.final_bill - data?.data?.total_discount}
+                />
               </span>
             </div>
           </>
@@ -140,7 +140,7 @@ const SingleInvoice = () => {
         <div className="text-[10px] text-center mt-6 font-medium border-b border-t border-black">
           <p className="py-1">
             Thanks for visiting{" "}
-            <span className="capitalize">{user?.pharmacyInfo?.pharmacy_name}</span>! Come
+            <span className="capitalize">{user?.brand?.brand_name}</span>! Come
             again
           </p>
         </div>
@@ -174,4 +174,4 @@ const SingleInvoice = () => {
   );
 };
 
-export default SingleInvoice;
+export default SingleInvoicePurchase;

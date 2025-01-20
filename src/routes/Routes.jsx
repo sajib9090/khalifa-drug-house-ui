@@ -5,6 +5,8 @@ import Main from "../layout/Main";
 import Home from "../pages/Home/Home";
 import Login from "../pages/Login/Login";
 import AuthenticatedRoute from "./AuthenticatedRoute";
+import FullPageLoader from "../components/Loading/FullPageLoader";
+import Error from "../pages/Error/Error";
 const Dashboard = lazy(() => import("../pages/Dashboard/Dashboard"));
 const MedicineDetails = lazy(() =>
   import("../pages/Dashboard/MedicineDetails/MedicineDetails")
@@ -21,6 +23,16 @@ const NewPurchase = lazy(() =>
 );
 const Sell = lazy(() => import("../pages/Sell/Sell"));
 const SingleInvoice = lazy(() => import("../pages/Sell/SingleInvoice"));
+const SingleInvoicePurchase = lazy(() =>
+  import("../pages/Purchase/SingleInvoicePurchase")
+);
+const SingleMedicine = lazy(() =>
+  import("../pages/Dashboard/MedicineDetails/SingleMedicine/SingleMedicine")
+);
+const Reports = lazy(() => import("../pages/Reports/Reports"));
+const DateWiseReport = lazy(() =>
+  import("../pages/Reports/DateWiseReport/DateWiseReport")
+);
 
 export const router = createBrowserRouter([
   {
@@ -30,12 +42,12 @@ export const router = createBrowserRouter([
         <Main />
       </AuthenticatedRoute>
     ),
-    errorElement: <h1>Error</h1>,
+    errorElement: <Error />,
     children: [
       {
         path: "/",
         element: (
-          <Suspense fallback={"LoadingSpinner"}>
+          <Suspense fallback={<FullPageLoader />}>
             <Home />
           </Suspense>
         ),
@@ -43,7 +55,7 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: (
-          <Suspense fallback={"LoadingSpinner"}>
+          <Suspense fallback={<FullPageLoader />}>
             <Dashboard />
           </Suspense>
         ),
@@ -51,15 +63,23 @@ export const router = createBrowserRouter([
       {
         path: "dashboard/medicine-details",
         element: (
-          <Suspense fallback={"LoadingSpinner"}>
+          <Suspense fallback={<FullPageLoader />}>
             <MedicineDetails />
+          </Suspense>
+        ),
+      },
+      {
+        path: "dashboard/medicine-details/:id",
+        element: (
+          <Suspense fallback={<FullPageLoader />}>
+            <SingleMedicine />
           </Suspense>
         ),
       },
       {
         path: "dashboard/dosage-forms",
         element: (
-          <Suspense fallback={"LoadingSpinner"}>
+          <Suspense fallback={<FullPageLoader />}>
             <DosageForms />
           </Suspense>
         ),
@@ -67,7 +87,7 @@ export const router = createBrowserRouter([
       {
         path: "dashboard/groups",
         element: (
-          <Suspense fallback={"LoadingSpinner"}>
+          <Suspense fallback={<FullPageLoader />}>
             <Groups />
           </Suspense>
         ),
@@ -75,7 +95,7 @@ export const router = createBrowserRouter([
       {
         path: "dashboard/companies",
         element: (
-          <Suspense fallback={"LoadingSpinner"}>
+          <Suspense fallback={<FullPageLoader />}>
             <Companies />
           </Suspense>
         ),
@@ -83,15 +103,23 @@ export const router = createBrowserRouter([
       {
         path: "/purchase",
         element: (
-          <Suspense fallback={"LoadingSpinner"}>
+          <Suspense fallback={<FullPageLoader />}>
             <Purchase />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/purchase/:id",
+        element: (
+          <Suspense fallback={<FullPageLoader />}>
+            <SingleInvoicePurchase />
           </Suspense>
         ),
       },
       {
         path: "/purchase/purchase-details?",
         element: (
-          <Suspense fallback={"LoadingSpinner"}>
+          <Suspense fallback={<FullPageLoader />}>
             <Query />
           </Suspense>
         ),
@@ -99,7 +127,7 @@ export const router = createBrowserRouter([
       {
         path: "/purchase/purchase-details/new-purchase",
         element: (
-          <Suspense fallback={"LoadingSpinner"}>
+          <Suspense fallback={<FullPageLoader />}>
             <NewPurchase />
           </Suspense>
         ),
@@ -107,7 +135,7 @@ export const router = createBrowserRouter([
       {
         path: "/sell",
         element: (
-          <Suspense fallback={"LoadingSpinner"}>
+          <Suspense fallback={<FullPageLoader />}>
             <Sell />
           </Suspense>
         ),
@@ -115,8 +143,24 @@ export const router = createBrowserRouter([
       {
         path: "/sell/:id",
         element: (
-          <Suspense fallback={"LoadingSpinner"}>
+          <Suspense fallback={<FullPageLoader />}>
             <SingleInvoice />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/reports",
+        element: (
+          <Suspense fallback={<FullPageLoader />}>
+            <Reports />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/reports/query",
+        element: (
+          <Suspense fallback={<FullPageLoader />}>
+            <DateWiseReport />
           </Suspense>
         ),
       },
@@ -125,6 +169,6 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
-    errorElement: <h1>Error</h1>,
+    errorElement: <Error />,
   },
 ]);

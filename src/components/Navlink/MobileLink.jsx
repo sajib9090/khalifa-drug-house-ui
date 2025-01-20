@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { GiSellCard } from "react-icons/gi";
 import { HiDocumentReport } from "react-icons/hi";
 import { ImHome3 } from "react-icons/im";
@@ -6,14 +7,17 @@ import { TbLogout2 } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { currentUser, logout } from "../../redux/features/auth/authSlice";
+import { BiSolidPurchaseTag } from "react-icons/bi";
 
-const MobileLink = () => {
+const MobileLink = ({ setIsMenuOpen }) => {
   const user = useSelector(currentUser);
   const location = useLocation();
   const dispatch = useDispatch();
+
   return (
     <div className="w-full">
       <Link
+        onClick={() => setIsMenuOpen(false)}
         to={"/"}
         className={`flex items-center justify-center px-6 space-x-2 py-3 text-lg hover:bg-[#009099] hover:text-white ${
           location?.pathname === "/"
@@ -25,6 +29,7 @@ const MobileLink = () => {
         <p>Home</p>
       </Link>
       <Link
+        onClick={() => setIsMenuOpen(false)}
         to={"/dashboard"}
         className={`flex items-center justify-center px-6 space-x-2 py-3 text-lg hover:bg-[#009099] hover:text-white ${
           location?.pathname?.includes("dashboard")
@@ -36,6 +41,7 @@ const MobileLink = () => {
         <p>Dashboard</p>
       </Link>
       <Link
+        onClick={() => setIsMenuOpen(false)}
         to={"/inventory"}
         className={`flex items-center justify-center px-6 space-x-2 py-3 text-lg hover:bg-[#009099] hover:text-white ${
           location?.pathname?.includes("inventory")
@@ -47,6 +53,19 @@ const MobileLink = () => {
         <p>Inventory</p>
       </Link>
       <Link
+        onClick={() => setIsMenuOpen(false)}
+        to={"/purchase"}
+        className={`flex items-center justify-center px-6 space-x-2 py-3 text-lg hover:bg-[#009099] hover:text-white ${
+          location?.pathname?.includes("purchase")
+            ? " bg-[#009099] text-white "
+            : "text-black"
+        }`}
+      >
+        <BiSolidPurchaseTag />
+        <p>Purchase</p>
+      </Link>
+      <Link
+        onClick={() => setIsMenuOpen(false)}
         to={"/sell"}
         className={`flex items-center justify-center px-6 space-x-2 py-3 text-lg hover:bg-[#009099] hover:text-white ${
           location?.pathname?.includes("sell")
@@ -58,6 +77,7 @@ const MobileLink = () => {
         <p>Sell</p>
       </Link>
       <Link
+        onClick={() => setIsMenuOpen(false)}
         to={"/reports"}
         className={`flex items-center justify-center px-6 space-x-2 py-3 text-lg hover:bg-[#009099] hover:text-white ${
           location?.pathname?.includes("reports")

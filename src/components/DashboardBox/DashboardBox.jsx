@@ -11,7 +11,8 @@ const DashboardBox = ({
   title,
 }) => {
   return (
-    <div
+    <Link
+      to={link}
       className={`h-[160px] rounded border-[2px] ${borderColor} flex flex-col justify-between`}
     >
       <div className="flex flex-col items-center justify-center flex-grow">
@@ -22,9 +23,9 @@ const DashboardBox = ({
       <div
         className={`border-t-[2px] ${borderColor} h-[30px] w-full ${backGroundColor} text-center`}
       >
-        <Link to={link}>View Details </Link>
+        <p>View Details </p>
       </div>
-    </div>
+    </Link>
   );
 };
 

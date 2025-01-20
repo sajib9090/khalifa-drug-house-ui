@@ -30,10 +30,14 @@ export const purchaseLogSlice = createSlice({
         (item) => !(item._id === id)
       );
     },
+    removeAllPurchaseItems: (state) => {
+      state.selectedPurchaseItems = [];
+    },
   },
 });
 
-export const { addPurchaseLog, removeSingleItem } = purchaseLogSlice.actions;
+export const { addPurchaseLog, removeSingleItem, removeAllPurchaseItems } =
+  purchaseLogSlice.actions;
 
 export default purchaseLogSlice.reducer;
 

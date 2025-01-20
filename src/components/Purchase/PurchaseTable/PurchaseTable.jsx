@@ -5,6 +5,7 @@ import { useState } from "react";
 import CurrencyFormatter from "../../CurrencyFormatter/CurrencyFormatter";
 import Modal from "../../Modal/Modal";
 import { toast } from "sonner";
+import { ImBin2 } from "react-icons/im";
 
 const PurchaseTable = ({
   purchaseItems,
@@ -42,47 +43,51 @@ const PurchaseTable = ({
           <table className="min-w-full table-auto border border-gray-300">
             <thead>
               <tr className="bg-gray-100">
-                <th className="px-4 py-2 border">No</th>
-                <th className="px-4 py-2 border text-start">Title</th>
-                <th className="px-4 py-2 border text-start">Company</th>
-                <th className="px-4 py-2 border text-end">Quantity(pc)</th>
-                <th className="px-4 py-2 border text-end">Stock(pc)</th>
-                <th className="px-4 py-2 border text-end">P Price</th>
-                <th className="px-4 py-2 border text-center">Action</th>
+                <th className="px-2 py-2 border">No</th>
+                <th className="px-2 py-2 border text-start">Title</th>
+                <th className="px-2 py-2 border text-start">Company</th>
+                <th className="px-2 py-2 border text-end">Stock(pc)</th>
+                <th className="px-2 py-2 border text-end">Qty(pc)</th>
+                <th className="px-2 py-2 border text-end">P Price</th>
+                <th className="px-2 py-2 border text-end">Total</th>
+                <th className="px-2 py-2 border text-center"></th>
               </tr>
             </thead>
             <tbody>
               {purchaseItems?.length > 0 ? (
                 purchaseItems?.map((item, index) => (
                   <tr key={item?._id} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 border text-center">
+                    <td className="px-2 py-2 border text-center">
                       {index + 1}
                     </td>
-                    <td className="px-4 py-2 border text-start">
+                    <td className="px-2 py-2 border text-start">
                       {item?.medicine_title?.length > 100
                         ? item?.medicine_title?.slice(0, 100) + "..."
                         : item?.medicine_title}
                     </td>
-                    <td className="px-4 py-2 border text-start">
+                    <td className="px-2 py-2 border text-start">
                       {item?.company?.length > 10
                         ? item?.company?.slice(0, 10) + "..."
                         : item?.company}
                     </td>
-                    <td className="px-4 py-2 border text-end">
-                      {item?.p_quantity}
-                    </td>
-                    <td className="px-4 py-2 border text-end text-green-600">
+                    <td className="px-2 py-2 border text-end text-green-600">
                       {item?.stock}
                     </td>
-                    <td className="px-4 py-2 border text-end">
+                    <td className="px-2 py-2 border text-end">
+                      {item?.p_quantity}
+                    </td>
+                    <td className="px-2 py-2 border text-end">
                       <CurrencyFormatter value={item?.purchase_price} />
                     </td>
-                    <td className="px-4 py-2 border text-center">
+                    <td className="px-2 py-2 border text-end">
+                      <CurrencyFormatter value={item?.purchase_price * item?.p_quantity} />
+                    </td>
+                    <td className="px-2 py-2 border text-center">
                       <button
                         onClick={() => handleDelete(item?._id)}
                         className="text-red-500 hover:underline"
                       >
-                        Delete
+                        <ImBin2 />
                       </button>
                     </td>
                   </tr>

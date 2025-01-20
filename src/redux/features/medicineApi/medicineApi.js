@@ -15,7 +15,7 @@ const medicineApi = baseApi.injectEndpoints({
       }) => {
         const params = new URLSearchParams();
 
-        if (stockValue) params.append("stockValue", stockValue);
+        if (stockValue) params.append("stockLeft", stockValue);
         if (searchValue) params.append("search", searchValue);
         if (limitValue) params.append("limit", limitValue);
         if (pageValue) params.append("page", pageValue);
@@ -50,6 +50,13 @@ const medicineApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Medicine"],
     }),
+    getSingleMedicineById: builder.query({
+      query: ({ id }) => ({
+        url: `/medicines/get-medicine/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Medicine"],
+    }),
   }),
 });
 
@@ -57,4 +64,5 @@ export const {
   useAddNewMedicineMutation,
   useGetAllMedicinesQuery,
   useRemoveMedicineMutation,
+  useGetSingleMedicineByIdQuery,
 } = medicineApi;

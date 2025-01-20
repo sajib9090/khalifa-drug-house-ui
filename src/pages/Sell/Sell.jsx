@@ -9,6 +9,7 @@ import { useGetAllMedicinesQuery } from "../../redux/features/medicineApi/medici
 import SellTable from "../../components/Sell/SellTable/SellTable";
 import { toast } from "sonner";
 import Sidebar from "../../components/Sell/Sidebar/Sidebar";
+import FullPageLoader from "../../components/Loading/FullPageLoader";
 
 const Sell = () => {
   const searchInputRef = useRef(null);
@@ -47,17 +48,16 @@ const Sell = () => {
       data?.data?.filter((medicine) =>
         medicine?.medicine_name
           ?.toLowerCase()
-          ?.includes(searchValue.trim().toLowerCase())
+          ?.includes(searchValue?.trim()?.toLowerCase())
       ) || [],
     [data, searchValue]
   );
-
 
   const handleKeyDown = useCallback(
     (event) => {
       if (!filteredData) return;
 
-      const resultsLength = filteredData.length;
+      const resultsLength = filteredData?.length;
 
       if (event.key === "ArrowDown") {
         event.preventDefault();
@@ -124,6 +124,10 @@ const Sell = () => {
       }
     };
   }, [handleKeyDown]);
+
+  if (isFetching) {
+    return <FullPageLoader />;
+  }
 
   return (
     <div className="px-4 py-6 grid grid-cols-1 md:grid-cols-12 gap-2">

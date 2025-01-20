@@ -8,6 +8,7 @@ import {
   selectedPurchaseItems,
 } from "../../../redux/features/purchase/purchaseSlice";
 import PurchaseTable from "../../../components/Purchase/PurchaseTable/PurchaseTable";
+import SubmitPurchase from "../../../components/Purchase/SubmitPurchase/SubmitPurchase";
 
 const NewPurchase = () => {
   const searchInputRef = useRef(null);
@@ -251,25 +252,12 @@ const NewPurchase = () => {
         />
 
         {/* Submit Purchase */}
-        <div className="mt-6 flex justify-end">
-          <button
-            onClick={() => {
-              const purchaseDetails = {
-                purchaseItems,
-                total,
-                totalDiscount,
-                subtotal,
-              };
-
-              dispatch(addPurchaseLogHistory(purchaseDetails));
-              alert("Purchase successfully logged!");
-            }}
-            className="px-6 py-3 bg-blue-500 text-white rounded font-semibold hover:bg-blue-600"
-            aria-label="Submit purchase"
-          >
-            Submit Purchase
-          </button>
-        </div>
+        <SubmitPurchase
+          purchaseItems={purchaseItems}
+          totalDiscount={totalDiscount}
+          total={total}
+          subtotal={subtotal}
+        />
       </div>
     </div>
   );
