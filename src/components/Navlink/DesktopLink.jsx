@@ -1,4 +1,4 @@
-import { GiSellCard } from "react-icons/gi";
+import { GiSellCard, GiExpense } from "react-icons/gi";
 import { HiDocumentReport } from "react-icons/hi";
 import { ImHome3 } from "react-icons/im";
 import { MdSpaceDashboard } from "react-icons/md";
@@ -37,6 +37,17 @@ const DesktopLink = () => {
       >
         <MdSpaceDashboard />
         <p>Dashboard</p>
+      </Link>
+      <Link
+        to={"/expense"}
+        className={`flex items-center px-6 space-x-2 py-3 text-lg hover:bg-[#009099] hover:text-white ${
+          location?.pathname?.includes("expense")
+            ? " bg-[#009099] text-white "
+            : "text-black"
+        }`}
+      >
+        <GiExpense />
+        <p>Expense</p>
       </Link>
       <Link
         to={"/inventory"}

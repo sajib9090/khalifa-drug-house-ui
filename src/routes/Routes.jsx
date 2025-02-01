@@ -33,6 +33,10 @@ const Reports = lazy(() => import("../pages/Reports/Reports"));
 const DateWiseReport = lazy(() =>
   import("../pages/Reports/DateWiseReport/DateWiseReport")
 );
+const Expense = lazy(() => import("../pages/Expense/Expense"));
+const DailyExpenses = lazy(() =>
+  import("../pages/Expense/DailyExpenses/DailyExpenses")
+);
 
 export const router = createBrowserRouter([
   {
@@ -97,6 +101,22 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<FullPageLoader />}>
             <Companies />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/expense",
+        element: (
+          <Suspense fallback={<FullPageLoader />}>
+            <Expense />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/expense/daily-expenses",
+        element: (
+          <Suspense fallback={<FullPageLoader />}>
+            <DailyExpenses />
           </Suspense>
         ),
       },
